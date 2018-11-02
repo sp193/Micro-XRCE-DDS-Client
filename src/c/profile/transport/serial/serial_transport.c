@@ -3,16 +3,10 @@
 #include <uxr/client/util/time.h>
 
 /*******************************************************************************
- * Static members.
- *******************************************************************************/
-static uint8_t error_code;
-
-/*******************************************************************************
  * Private function declarations.
  *******************************************************************************/
 static bool send_serial_msg(void* instance, const uint8_t* buf, size_t len);
 static bool recv_serial_msg(void* instance, uint8_t** buf, size_t* len, int timeout);
-static uint8_t get_serial_error(void);
 
 /*******************************************************************************
  * Private function definitions.
@@ -36,7 +30,7 @@ static bool send_serial_msg(void* instance, const uint8_t* buf, size_t len)
     }
     else
     {
-        error_code = errcode;
+        transport->comm.error_code = errcode;
     }
 
     return rv;
@@ -69,18 +63,13 @@ static bool recv_serial_msg(void* instance, uint8_t** buf, size_t* len, int time
         }
         else
         {
-            error_code = errcode;
+            transport->comm.error_code = errcode;
         }
         timeout -= (int)(uxr_millis() - time_init);
     }
     while ((0 == bytes_read) && (0 < timeout));
 
     return rv;
-}
-
-static uint8_t get_serial_error(void)
-{
-    return error_code;
 }
 
 /*******************************************************************************
@@ -108,7 +97,7 @@ bool uxr_init_serial_transport(uxrSerialTransport* transport,
         transport->comm.instance = (void*)transport;
         transport->comm.send_msg = send_serial_msg;
         transport->comm.recv_msg = recv_serial_msg;
-        transport->comm.comm_error = get_serial_error;
+        transport->comm.error_code = 0;
         transport->comm.mtu = UXR_CONFIG_SERIAL_TRANSPORT_MTU;
 
         rv = true;

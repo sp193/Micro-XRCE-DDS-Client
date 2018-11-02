@@ -1,16 +1,10 @@
 #include "udp_transport_internal.h"
 
 /*******************************************************************************
- * Static members.
- *******************************************************************************/
-static uint8_t error_code;
-
-/*******************************************************************************
  * Private function declarations.
  *******************************************************************************/
 static bool send_udp_msg(void* instance, const uint8_t* buf, size_t len);
 static bool recv_udp_msg(void* instance, uint8_t** buf, size_t* len, int timeout);
-static uint8_t get_udp_error(void);
 
 /*******************************************************************************
  * Private function definitions.
@@ -28,7 +22,7 @@ static bool send_udp_msg(void* instance, const uint8_t* buf, size_t len)
     }
     else
     {
-        error_code = errcode;
+        transport->comm.error_code = errcode;
     }
     return rv;
 }
@@ -52,14 +46,9 @@ static bool recv_udp_msg(void* instance, uint8_t** buf, size_t* len, int timeout
     }
     else
     {
-        error_code = errcode;
+        transport->comm.error_code = errcode;
     }
     return rv;
-}
-
-static uint8_t get_udp_error(void)
-{
-    return error_code;
 }
 
 /*******************************************************************************
@@ -78,7 +67,7 @@ bool uxr_init_udp_transport(uxrUDPTransport* transport, struct uxrUDPPlatform* p
         transport->comm.instance = (void*)transport;
         transport->comm.send_msg = send_udp_msg;
         transport->comm.recv_msg = recv_udp_msg;
-        transport->comm.comm_error = get_udp_error;
+        transport->comm.error_code = 0;
         transport->comm.mtu = UXR_CONFIG_UDP_TRANSPORT_MTU;
         rv = true;
     }

@@ -26,14 +26,13 @@ extern "C"
 
 typedef bool (*send_msg_func)(void* instance, const uint8_t* buf, size_t len);
 typedef bool (*recv_msg_func)(void* instance, uint8_t** buf, size_t* len, int timeout);
-typedef uint8_t (*comm_error_func)(void);
 
 typedef struct uxrCommunication
 {
     void* instance;
     send_msg_func send_msg;
     recv_msg_func recv_msg;
-    comm_error_func comm_error;
+    uint8_t error_code;
     uint16_t mtu;
 
 } uxrCommunication;
