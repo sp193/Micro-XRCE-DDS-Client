@@ -35,10 +35,10 @@ bool send_tcp_msg(void* instance, const uint8_t* buf, size_t len)
             if (0 < errcode)
             {
                 uxr_disconnect_tcp_platform(transport->platform);
-                transport->comm.error_code = errcode;
                 rv = false;
             }
         }
+        transport->comm.error_code = errcode;
     }
     while (rv && bytes_sent != 2);
 
@@ -59,10 +59,10 @@ bool send_tcp_msg(void* instance, const uint8_t* buf, size_t len)
                 if (0 < errcode)
                 {
                     uxr_disconnect_tcp_platform(transport->platform);
-                    transport->comm.error_code = errcode;
                     rv = false;
                 }
             }
+            transport->comm.error_code = errcode;
         }
         while (rv && (bytes_sent != len));
     }
@@ -132,9 +132,9 @@ size_t read_tcp_data(uxrTCPTransport* transport, int timeout)
                     {
                         uxr_disconnect_tcp_platform(transport->platform);
                     }
-                    transport->comm.error_code = errcode;
                     exit_flag = true;
                 }
+                transport->comm.error_code = errcode;
                 break;
             }
             case UXR_TCP_SIZE_INCOMPLETE:
@@ -160,9 +160,9 @@ size_t read_tcp_data(uxrTCPTransport* transport, int timeout)
                     {
                         uxr_disconnect_tcp_platform(transport->platform);
                     }
-                    transport->comm.error_code = errcode;
                     exit_flag = true;
                 }
+                transport->comm.error_code = errcode;
                 break;
             }
             case UXR_TCP_SIZE_READ:
@@ -192,9 +192,9 @@ size_t read_tcp_data(uxrTCPTransport* transport, int timeout)
                     {
                         uxr_disconnect_tcp_platform(transport->platform);
                     }
-                    transport->comm.error_code = errcode;
                     exit_flag = true;
                 }
+                transport->comm.error_code = errcode;
                 break;
             }
             case UXR_TCP_MESSAGE_INCOMPLETE:
@@ -225,9 +225,9 @@ size_t read_tcp_data(uxrTCPTransport* transport, int timeout)
                     {
                         uxr_disconnect_tcp_platform(transport->platform);
                     }
-                    transport->comm.error_code = errcode;
                     exit_flag = true;
                 }
+                transport->comm.error_code = errcode;
                 break;
             }
             case UXR_TCP_MESSAGE_AVAILABLE:
