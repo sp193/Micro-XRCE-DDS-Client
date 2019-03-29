@@ -50,6 +50,8 @@ static void read_submessage_performance(uxrSession* session, ucdrBuffer* submess
 static void process_status(uxrSession* session, uxrObjectId object_id, uint16_t request_id, uint8_t status);
 static void on_new_output_reliable_stream_segment(ucdrBuffer* ub, void* args);
 
+bool uxr_prepare_stream_to_write_submessage(uxrSession* session, uxrStreamId stream_id, size_t payload_size, ucdrBuffer* ub, uint8_t submessage_id, uint8_t mode);
+
 //==================================================================
 //                             PUBLIC
 //==================================================================
@@ -256,18 +258,14 @@ bool uxr_buffer_performance(uxrSession *session,
     payload.epoch_time_msb = (uint32_t)(epoch_time >> 32);
     payload.buf = buf;
     payload.len = len;
-    ucdrBuffer mb;
+    ucdrBuffer ub;
     const uint16_t payload_length = (uint16_t)(sizeof(payload.epoch_time_lsb) +
                                                sizeof(payload.epoch_time_msb) +
                                                len);
-    if (uxr_prepare_stream_to_write(&session->streams, stream_id, (size_t)(SUBHEADER_SIZE + payload_length), &mb))
+    uint8_t flags = (echo) ? UXR_ECHO : 0;
+    if (uxr_prepare_stream_to_write_submessage(session, stream_id, payload_length, &ub, SUBMESSAGE_ID_PERFORMANCE, flags))
     {
-        uint8_t flags = (echo) ? UXR_ECHO : 0;
-        (void) uxr_buffer_submessage_header(&mb,
-                                            SUBMESSAGE_ID_PERFORMANCE,
-                                            payload_length,
-                                            flags);
-        (void) uxr_serialize_PERFORMANCE_Payload(&mb, &payload);
+        (void) uxr_serialize_PERFORMANCE_Payload(&ub, &payload);
         rv = true;
     }
     return rv;
