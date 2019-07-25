@@ -100,14 +100,14 @@ find_package(microcdr 1.1.0 EXACT REQUIRED PATHS ${PROJECT_BINARY_DIR}/temp_inst
 # Check platform.
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     set(PLATFORM_NAME_LINUX ON)
-    set(TRANSPORT_TYPES "UDP" "TCP" "SERIAL")
+    set(TRANSPORT_TYPES "UDP" "TCP" "SERIAL" "TLS")
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     set(PLATFORM_NAME_WINDOWS ON)
-    set(TRANSPORT_TYPES "UDP" "TCP")
+    set(TRANSPORT_TYPES "UDP" "TCP" "TLS")
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Generic")
     if(PLATFORM_NAME STREQUAL "nuttx")
         set(PLATFORM_NAME_NUTTX ON)
-        set(TRANSPORT_TYPES "UDP" "TCP" "SERIAL")
+        set(TRANSPORT_TYPES "UDP" "TCP" "SERIAL" "TLS")
     endif()
 endif()
 
@@ -177,6 +177,7 @@ set(SRCS
     ${UDP_SRCS}
     ${TCP_SRCS}
     ${SERIAL_SRCS}
+    ${TLS_SRCS}
     )
 
 ###############################################################################
@@ -221,8 +222,10 @@ endif()
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
         microcdr
+        ssl
         $<$<BOOL:$<PLATFORM_ID:Windows>>:ws2_32>
     PRIVATE
+        ssl
         $<$<BOOL:$<PLATFORM_ID:Linux>>:rt>
     )
 target_include_directories(${PROJECT_NAME}
@@ -262,7 +265,9 @@ endif()
 ###############################################################################
 if(UCLIENT_BUILD_EXAMPLES)
     add_subdirectory(examples/PublishHelloWorld)
+    add_subdirectory(examples/PublishHelloWorldTLS)
     add_subdirectory(examples/SubscribeHelloWorld)
+    add_subdirectory(examples/SubscribeHelloWorldTLS)
     add_subdirectory(examples/ShapesDemo)
     add_subdirectory(examples/Deployment)
     add_subdirectory(examples/Discovery)

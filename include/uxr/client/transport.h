@@ -39,6 +39,17 @@
 #endif
 #endif //PROFILE_TCP_TRANSPORT
 
+#ifdef PROFILE_TLS_TRANSPORT
+#include <uxr/client/profile/transport/tls/tls_transport.h>
+#if defined(PLATFORM_NAME_LINUX)
+#include <uxr/client/profile/transport/tls/tls_transport_linux.h>
+#elif defined(PLATFORM_NAME_WINDOWS)
+#include <uxr/client/profile/transport/tls/tls_transport_windows.h>
+#elif defined(PLATFORM_NAME_NUTTX)
+#include <uxr/client/profile/transport/tls/tls_transport_linux.h>
+#endif
+#endif //PROFILE_TLS_TRANSPORT
+
 #ifdef PROFILE_SERIAL_TRANSPORT
 #include <uxr/client/profile/transport/serial/serial_transport.h>
 #if defined(PLATFORM_NAME_LINUX)
